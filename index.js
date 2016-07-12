@@ -1,3 +1,8 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 /**
  * Disables all login when in minified production code, else allows
  * all logging to happen (when presumably in dev).
@@ -6,27 +11,26 @@
  *
  * @type {number}
  */
-const LOG_LEVEL = /not minified/.test(() => { /* not minified */ }) ? 3 : 0;
-const LOG_METHODS = [
-  'error',
-  'warn',
-  'log',
-  'debug',
-];
-const noop = () => {};
+var LOG_LEVEL = /not minified/.test(function () {/* not minified */}) ? 3 : 0;
+var LOG_METHODS = ['error', 'warn', 'log', 'debug'];
+var noop = function noop() {};
 
-const supportsGroup = !! window.console.group;
-let consoleGroup = null;
-let consoleTimeout = null;
+var supportsGroup = !!window.console.group;
+var consoleGroup = null;
+var consoleTimeout = null;
 
 /**
  * Creates a console object
  * @param reference
  * @returns {{}}
  */
-function consoleFactory(...reference) {
-  const console = {};
-  let logLevel = LOG_LEVEL;
+function consoleFactory() {
+  var console = {};
+  var logLevel = LOG_LEVEL;
+
+  for (var _len = arguments.length, reference = Array(_len), _key = 0; _key < _len; _key++) {
+    reference[_key] = arguments[_key];
+  }
 
   if (typeof reference[reference.length - 1] === 'number') {
     logLevel = reference.splice(reference.length - 1, 1);
@@ -35,42 +39,48 @@ function consoleFactory(...reference) {
     }
   }
 
-  const module = `CasinoFlix#${reference.join('/')}:`;
+  var module = 'CasinoFlix#' + reference.join('/') + ':';
 
-  LOG_METHODS.forEach((method, level) => {
+  LOG_METHODS.forEach(function (method, level) {
     if (level <= logLevel) {
-    if (supportsGroup) {
-      console[method] = function (...args) {
-        if (consoleGroup !== module) {
-          if (consoleGroup !== null) {
-            window.console.groupEnd();
-            clearTimeout(consoleTimeout);
+      if (supportsGroup) {
+        console[method] = function () {
+          if (consoleGroup !== module) {
+            if (consoleGroup !== null) {
+              window.console.groupEnd();
+              clearTimeout(consoleTimeout);
+            }
+
+            window.console.group(module);
+
+            consoleGroup = module;
+
+            consoleTimeout = setTimeout(function () {
+              window.console.groupEnd();
+              consoleGroup = null;
+            }, 16);
           }
 
-          window.console.group(module);
+          for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
+          }
 
-          consoleGroup = module;
+          return window.console[method].apply(window.console, args);
+        };
+      } else {
+        console[method] = function () {
+          var _ref;
 
-          consoleTimeout = setTimeout(() => {
-              window.console.groupEnd();
-          consoleGroup = null;
-        }, 16);
-        }
-
-        return window.console[method].apply(window.console, args);
-      };
+          return window.console[method].apply(window.console, (_ref = [module]).concat.apply(_ref, arguments));
+        };
+      }
     } else {
-      console[method] = function (...args) {
-        return window.console[method].apply(window.console, [module].concat(...args));
-      };
+      // Suppress
+      console[method] = noop;
     }
-  } else {
-    // Suppress
-    console[method] = noop;
-  }
-});
+  });
 
   return console;
 }
 
-export default consoleFactory;
+exports.default = consoleFactory;

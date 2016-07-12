@@ -1,0 +1,27 @@
+{
+  "name": "console-factory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raininglemons/console-factory.git"
+  },
+  "author": "Dom England",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raininglemons/console-factory/issues"
+  },
+  "homepage": "https://github.com/raininglemons/console-factory#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "eslint": "^3.0.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-rename": "^1.2.2"
+  }
+}
