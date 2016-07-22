@@ -15,7 +15,9 @@ const LOG_METHODS = [
 ];
 const noop = () => {};
 
-const supportsGroup = !! window.console.group;
+const _console = console;
+
+const supportsGroup = !!_console.group;
 let consoleGroup = null;
 let consoleTimeout = null;
 
@@ -35,7 +37,7 @@ function consoleFactory(...reference) {
     }
   }
 
-  const module = `CasinoFlix#${reference.join('/')}:`;
+  const module = `#${reference.join('/')}:`;
 
   LOG_METHODS.forEach((method, level) => {
     if (level <= logLevel) {
@@ -43,25 +45,25 @@ function consoleFactory(...reference) {
       console[method] = function (...args) {
         if (consoleGroup !== module) {
           if (consoleGroup !== null) {
-            window.console.groupEnd();
+            _console.groupEnd();
             clearTimeout(consoleTimeout);
           }
 
-          window.console.group(module);
+          _console.group(module);
 
           consoleGroup = module;
 
           consoleTimeout = setTimeout(() => {
-              window.console.groupEnd();
+              _console.groupEnd();
           consoleGroup = null;
         }, 16);
         }
 
-        return window.console[method].apply(window.console, args);
+        return _console[method].apply(_console, args);
       };
     } else {
       console[method] = function (...args) {
-        return window.console[method].apply(window.console, [module].concat(...args));
+        return _console[method].apply(_console, [module].concat(...args));
       };
     }
   } else {

@@ -15,7 +15,9 @@ var LOG_LEVEL = /not minified/.test(function () {/* not minified */}) ? 3 : 0;
 var LOG_METHODS = ['error', 'warn', 'log', 'debug'];
 var noop = function noop() {};
 
-var supportsGroup = !!window.console.group;
+var _console = console;
+
+var supportsGroup = !!_console.group;
 var consoleGroup = null;
 var consoleTimeout = null;
 
@@ -39,7 +41,7 @@ function consoleFactory() {
     }
   }
 
-  var module = 'CasinoFlix#' + reference.join('/') + ':';
+  var module = '#' + reference.join('/') + ':';
 
   LOG_METHODS.forEach(function (method, level) {
     if (level <= logLevel) {
@@ -47,16 +49,16 @@ function consoleFactory() {
         console[method] = function () {
           if (consoleGroup !== module) {
             if (consoleGroup !== null) {
-              window.console.groupEnd();
+              _console.groupEnd();
               clearTimeout(consoleTimeout);
             }
 
-            window.console.group(module);
+            _console.group(module);
 
             consoleGroup = module;
 
             consoleTimeout = setTimeout(function () {
-              window.console.groupEnd();
+              _console.groupEnd();
               consoleGroup = null;
             }, 16);
           }
@@ -65,13 +67,13 @@ function consoleFactory() {
             args[_key2] = arguments[_key2];
           }
 
-          return window.console[method].apply(window.console, args);
+          return _console[method].apply(_console, args);
         };
       } else {
         console[method] = function () {
           var _ref;
 
-          return window.console[method].apply(window.console, (_ref = [module]).concat.apply(_ref, arguments));
+          return _console[method].apply(_console, (_ref = [module]).concat.apply(_ref, arguments));
         };
       }
     } else {
