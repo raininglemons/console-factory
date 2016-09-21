@@ -11,7 +11,8 @@ Object.defineProperty(exports, "__esModule", {
  *
  * @type {number}
  */
-var LOG_LEVEL = /not minified/.test(function () {/* not minified */}) ? 3 : 0;
+var LOG_LEVEL = /not minified/.test(function () {/* not minified */
+}) ? 3 : 0;
 var LOG_METHODS = ['error', 'warn', 'log', 'debug'];
 var noop = function noop() {};
 
@@ -67,13 +68,13 @@ function consoleFactory() {
             args[_key2] = arguments[_key2];
           }
 
-          return _console[method].apply(_console, args);
+          return (_console[method] || _console['log']).apply(_console, args);
         };
       } else {
         console[method] = function () {
           var _ref;
 
-          return _console[method].apply(_console, (_ref = [module]).concat.apply(_ref, arguments));
+          return (_console[method] || _console['log']).apply(_console, (_ref = [module]).concat.apply(_ref, arguments));
         };
       }
     } else {

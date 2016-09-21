@@ -6,14 +6,16 @@
  *
  * @type {number}
  */
-const LOG_LEVEL = /not minified/.test(() => { /* not minified */ }) ? 3 : 0;
+const LOG_LEVEL = /not minified/.test(() => { /* not minified */
+}) ? 3 : 0;
 const LOG_METHODS = [
   'error',
   'warn',
   'log',
   'debug',
 ];
-const noop = () => {};
+const noop = () => {
+};
 
 const _console = console;
 
@@ -41,36 +43,36 @@ function consoleFactory(...reference) {
 
   LOG_METHODS.forEach((method, level) => {
     if (level <= logLevel) {
-    if (supportsGroup) {
-      console[method] = function (...args) {
-        if (consoleGroup !== module) {
-          if (consoleGroup !== null) {
-            _console.groupEnd();
-            clearTimeout(consoleTimeout);
+      if (supportsGroup) {
+        console[method] = function (...args) {
+          if (consoleGroup !== module) {
+            if (consoleGroup !== null) {
+              _console.groupEnd();
+              clearTimeout(consoleTimeout);
+            }
+
+            _console.group(module);
+
+            consoleGroup = module;
+
+            consoleTimeout = setTimeout(() => {
+              _console.groupEnd();
+              consoleGroup = null;
+            }, 16);
           }
 
-          _console.group(module);
-
-          consoleGroup = module;
-
-          consoleTimeout = setTimeout(() => {
-              _console.groupEnd();
-          consoleGroup = null;
-        }, 16);
-        }
-
-        return _console[method].apply(_console, args);
-      };
+          return (_console[method] || _console['log']).apply(_console, args);
+        };
+      } else {
+        console[method] = function (...args) {
+          return (_console[method] || _console['log']).apply(_console, [module].concat(...args));
+        };
+      }
     } else {
-      console[method] = function (...args) {
-        return _console[method].apply(_console, [module].concat(...args));
-      };
+      // Suppress
+      console[method] = noop;
     }
-  } else {
-    // Suppress
-    console[method] = noop;
-  }
-});
+  });
 
   return console;
 }
